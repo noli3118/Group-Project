@@ -24,6 +24,25 @@ const hbs = handlebars.create({
     partialsDir: __dirname + '/views/partials',
 });
 
+// Register `hbs` as our view engine using its bound `engine()` function.
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(bodyParser.json());
+// set Session
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        saveUninitialized: true,
+        resave: true,
+    })
+);
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+);
+
 // database configuration
 const dbConfig = {
     host: 'db', // the database server
@@ -123,25 +142,48 @@ app.get('/discover', async (req, res) => {
 
 // Register
 app.post('/register', async (req, res) => {
-    //hash the password using bcrypt library
-    const hash = await bcrypt.hash(req.body.password, 10);
 
-    // To-DO: Insert username and hashed password into the 'users' table
-    const query = `INSERT INTO users(username, password) VALUES ($1, $2) RETURNING * ;`;
-    db.any(query, [
-        req.body.username,
-        hash
-    ])
-        // if query execution succeeds
-        // send success message
-        .then(function (data) {
-            res.render('pages/login');
-        })
-        // if query execution fails
-        // send error message
-        .catch(function (err) {
-            res.render('pages/register');
-        });
+    //hash the password using bcrypt library
+    const hashed = await bcrypt.hash(req.body.password, 10);
+
+    const query = `INSERT INTO users (username,password) VALUES ($1,$2)`;
+
+    try {
+        await db.any(query, [req.body.username, hashed])
+        res.render('pages/login');
+        console.log('successfully added')
+    }
+    catch (err) {
+        res.redirect("/register");
+        console.log('register failed');
+    }
+
+    // //hash the password using bcrypt library
+    // const hash = await bcrypt.hash(req.body.password, 10);
+
+    // // To-DO: Insert username and hashed password into the 'users' table
+    // const query = `INSERT INTO users(username, password) VALUES ($1, $2) RETURNING * ;`;
+    // db.any(query, [
+    //     req.body.username,
+    //     hash
+    // ])
+    //     // if query execution succeeds
+    //     // send success message
+    //     .then(function (data) {
+    //         res.render('pages/login', {
+    //             status: 'success',
+    //             data: data,
+    //             message: 'registration completeted successfully',
+    //         });
+    //     })
+    //     // if query execution fails
+    //     // send error message
+    //     .catch(function (err) {
+    //         res.render('pages/register', {
+    //             message: `Registration failed, try again`,
+    //         });
+    //         return console.log('query failed' + '\n' + err);
+    //     });
 });
 
 // Login
