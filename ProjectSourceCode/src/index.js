@@ -114,30 +114,36 @@ app.get('/logout', async (req, res) => {
     res.render('pages/logout.hbs')
 });
 
-app.get('/discover', async (req, res) => {
-    process.env.API_KEY = 'FQpannHAjd1zzUqV7pC037anK1M7NLdY';
-    axios({
-        url: `https://app.ticketmaster.com/discovery/v2/events.json`,
-        method: 'GET',
-        dataType: 'json',
-        headers: {
-            'Accept-Encoding': 'application/json',
-        },
-        params: {
-            apikey: process.env.API_KEY,
-            keyword: 'Taylor Swift', //you can choose any artist/event here
-            size: '10', // you can choose the number of events you would like to return
-        },
-    })
-        .then(results => {
-            console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+app.get('/home', async (req, res) => {
+    res.render('pages/home', {
+        username: req.session.user.username
+    });
+});
+
+app.post('/user_projects', async (req, res) => {
+    const query = `SELECT 
+    projects.project_name,
+    projects.project_description
+    FROM
+        projects
+        JOIN user_projects ON projects.project_name = user_projects.project_name
+        JOIN users ON users.username = user_projects.username
+        WHERE users.username = $1
+        ORDER BY projects.project_name ASC;`;
+    // Query to list all the courses taken by a student
+
+    await db.any(query, [req.body.username])
+        .then(async data => {
+            console.log('ran query');
+            console.log(data);
+            res.render('pages/user_projects', {
+                data
+            });
         })
-        .catch(error => {
-            // Handle errors
-            console.log(error);
-            //            res.redirect('/login');
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
         });
-    res.render('pages/discover.hbs')
 });
 
 // Register
@@ -158,32 +164,6 @@ app.post('/register', async (req, res) => {
         console.log('register failed');
     }
 
-    // //hash the password using bcrypt library
-    // const hash = await bcrypt.hash(req.body.password, 10);
-
-    // // To-DO: Insert username and hashed password into the 'users' table
-    // const query = `INSERT INTO users(username, password) VALUES ($1, $2) RETURNING * ;`;
-    // db.any(query, [
-    //     req.body.username,
-    //     hash
-    // ])
-    //     // if query execution succeeds
-    //     // send success message
-    //     .then(function (data) {
-    //         res.render('pages/login', {
-    //             status: 'success',
-    //             data: data,
-    //             message: 'registration completeted successfully',
-    //         });
-    //     })
-    //     // if query execution fails
-    //     // send error message
-    //     .catch(function (err) {
-    //         res.render('pages/register', {
-    //             message: `Registration failed, try again`,
-    //         });
-    //         return console.log('query failed' + '\n' + err);
-    //     });
 });
 
 // Login
@@ -212,7 +192,8 @@ app.post('/login', async (req, res) => {
                 //return console.log('incorrect username or password');
             }
             else {
-                res.render('pages/discover.hbs', {
+                res.render('pages/home.hbs', {
+                    username: user.username,
                     message: `Login successful`
                 });
                 req.session.user = user;
