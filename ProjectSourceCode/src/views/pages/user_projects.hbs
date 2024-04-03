@@ -1,0 +1,25 @@
+{{> message}}
+
+<h1>User Projects</h1>
+
+<table>
+    <tr>
+        <th>Project Name</th>
+        <th>Project Description</th>
+    </tr>
+    {{#each data}}
+    <tr>
+        <td>{{project_name}}</td>
+        <td>{{project_description}}</td>
+        {{!-- <td>
+            <form action="/courses/add" method="POST">
+                <input type="hidden" value={{course_id}} name="course_id"><br><br>
+                {{#if taken}}
+                {{else}}
+                <button type="submit">ADD</button>
+                {{/if}}
+            </form>
+        </td> --}}
+    </tr>
+    {{/each}}
+</table>
