@@ -20,7 +20,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./:/home/node/app
+      - ./src:/home/node/app
     command: 'npm start'
 volumes:
   group-project:
