@@ -1,11 +1,12 @@
+{{> message}}
+
 <h1>Welcome!</h1>
 <table>
     <tr>
-        <td>{{username}}</td>
+        <td>Username: {{username}}</td>
     </tr>
 </table>
 <form action="/user_projects" method="POST">
-    <label for="username">Username</label><br>
     <input type="hidden" value={{username}} name="username"><br><br>
     <button type="submit">My Projects</button><br><br>
 </form>

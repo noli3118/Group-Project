@@ -99,6 +99,10 @@ app.use(
 // *****************************************************
 
 // TODO - Include your API routes here
+app.get('/welcome', (req, res) => {
+    res.json({ status: 'success', message: 'Welcome!' });
+});
+
 app.get('/', (req, res) => {
     res.render('pages/login.hbs'); //this will call the /anotherRoute route in the API
 });
@@ -155,15 +159,71 @@ app.post('/register', async (req, res) => {
     const query = `INSERT INTO users (username,password) VALUES ($1,$2)`;
 
     try {
-        await db.any(query, [req.body.username, hashed])
-        res.render('pages/login');
-        console.log('successfully added')
+        if ((req.body.username).includes(1) ||
+            (req.body.username).includes(2) ||
+            (req.body.username).includes(3) ||
+            (req.body.username).includes(4) ||
+            (req.body.username).includes(5) ||
+            (req.body.username).includes(6) ||
+            (req.body.username).includes(7) ||
+            (req.body.username).includes(8) ||
+            (req.body.username).includes(9) ||
+            (req.body.username).includes(0)) {
+            junk.fail;
+        } else {
+            await db.any(query, [req.body.username, hashed])
+            res.render('pages/login', {
+                message: 'Registration successful'
+            });
+            console.log('successfully added')
+            res.status(200);
+        }
     }
     catch (err) {
-        res.redirect("/register");
+        res.render("pages/register", {
+            message: 'Registration failed'
+        });
+        res.status(500);
+        console.log(err);
         console.log('register failed');
     }
 
+});
+
+app.post('/register.json', async (req, res) => {
+    //hash the password using bcrypt library
+    const hashed = await bcrypt.hash(req.body.password, 10);
+
+    const query = `INSERT INTO users (username,password) VALUES ($1,$2)`;
+
+    try {
+        if ((req.body.username).includes(1) ||
+            (req.body.username).includes(2) ||
+            (req.body.username).includes(3) ||
+            (req.body.username).includes(4) ||
+            (req.body.username).includes(5) ||
+            (req.body.username).includes(6) ||
+            (req.body.username).includes(7) ||
+            (req.body.username).includes(8) ||
+            (req.body.username).includes(9) ||
+            (req.body.username).includes(0)
+        ) {
+            junk.fail;
+        } else {
+            await db.any(query, [req.body.username, hashed]);
+
+            res.json({
+                status: 'success',
+                message: 'Registration successful'
+            });
+        }
+    }
+    catch (err) {
+        res.json({
+            status: 'failure',
+            message: 'Registration failed'
+        });
+    }
 });
 
 // Login
@@ -227,5 +287,5 @@ app.use(auth);
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
