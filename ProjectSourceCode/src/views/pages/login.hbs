@@ -1,13 +1,16 @@
-{{> message}}
+<main>
+    <div class="container">
+        <form method="post" action="/login">
+            <h1>Login</h1>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" />
 
-<h1>Login</h1>
-<form action="/login" method="POST">
-    <label for="username">Username</label><br>
-    <input type="username" name="username"><br><br>
-    <label for="password">Password</label><br>
-    <input type="password" name="password"><br><br>
-    <button type="submit">Login</button><br><br>
-</form>
-<form action="/register" method="GET">
-    <button type="submit">register for an account</button><br><br>
-</form>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" />
+
+            <button type="submit">Login</button>
+            <a class="nav-link" href="/register">Click HERE register.</a>
+
+        </form>
+    </div>
+</main>

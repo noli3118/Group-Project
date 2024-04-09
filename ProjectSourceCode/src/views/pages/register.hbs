@@ -1,10 +1,16 @@
-{{> message}}
+<main>
+    <div class="container">
+        <form method="post" action="/register">
+            <h1>Register</h1>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" />
 
-<h1>Register</h1>
-<form action="/register" method="POST">
-    <label for="username">Username</label><br>
-    <input type="username" name="username"><br><br>
-    <label for="password">Password</label><br>
-    <input type="password" name="password"><br><br>
-    <button type="submit">Register</button>
-</form>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" />
+
+            <button type="submit">Register</button>
+            <a class="nav-link" href="/login">Click HERE for login.</a>
+
+        </form>
+    </div>
+</main>
