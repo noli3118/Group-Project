@@ -103,6 +103,10 @@ app.get('/welcome', (req, res) => {
     res.json({ status: 'success', message: 'Welcome!' });
 });
 
+app.get('/test', (req, res) => {
+    res.redirect('pages/login.hbs');
+});
+
 app.get('/', (req, res) => {
     res.render('pages/login.hbs'); //this will call the /anotherRoute route in the API
 });
