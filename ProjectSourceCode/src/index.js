@@ -114,6 +114,23 @@ app.get('/logout', async (req, res) => {
     res.render('pages/logout.hbs')
 });
 
+
+// adding paths to nav_bar pages
+app.get('/authors', async (req, res) => {
+    res.render('pages/authors.hbs')
+});
+
+app.get('/projects', async (req, res) => {
+    res.render('pages/projects.hbs')
+});
+
+app.get('/majors', async (req, res) => {
+    res.render('pages/majors.hbs')
+});
+
+
+
+
 app.get('/home', async (req, res) => {
     res.render('pages/home', {
         username: req.session.user.username
