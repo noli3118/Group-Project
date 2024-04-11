@@ -5,6 +5,12 @@ CREATE TABLE IF NOT EXISTS users (
  password VARCHAR(60) NOT NULL
 );
 
+DROP TABLE IF EXISTS majors;
+CREATE TABLE  majors(
+    major_name VARCHAR(50) PRIMARY KEY,
+    major_description CHAR(60) NOT NULL
+);
+
 DROP TABLE IF EXISTS projects;
 CREATE TABLE  projects(
     project_name VARCHAR(50) PRIMARY KEY,
