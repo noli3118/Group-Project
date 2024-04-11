@@ -292,6 +292,50 @@ app.post('/login', async (req, res) => {
         });
 });
 
+
+
+// added duplicate of login for testing
+app.post('/login.json', async (req, res) => {
+    //hash the password using bcrypt library
+    const hash = await bcrypt.hash(req.body.password, 10);
+
+    // To-DO: Insert username and hashed password into the 'users' table
+    const query = `SELECT *
+                FROM users
+                WHERE username = $1
+                LIMIT 1;`;
+
+    console.log(query);
+    console.log(req.body.username);
+    db.one(query, [req.body.username])
+        //    if query execution succeeds send success message
+        .then(async data => {
+            let valid = await bcrypt.compare(req.body.password, data.password);
+            user.username = req.body.username;
+            user.password = req.body.password;
+            if (!valid) {
+                res.json({
+                    message: 'Login failed'
+                });
+                //return console.log('incorrect username or password');
+            }
+            else {
+                res.json({
+                    message: 'Login successful'
+                });
+                res.status(401);
+                req.session.user = user;
+                req.session.save();
+                //     return console.log('correct username or password');
+            }
+        })
+        // if query execution fails
+        // send error message
+        .catch(function (err) {
+            return console.log('query failed' + '\n' + err);
+        });
+});
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
     if (!req.session.user) {
