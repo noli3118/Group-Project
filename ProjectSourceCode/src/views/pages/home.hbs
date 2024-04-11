@@ -2,12 +2,41 @@
 
 {{>message}}
 <h1>Welcome!</h1>
-<table>
-    <tr>
-        <td>Username: {{username}}</td>
-    </tr>
-</table>
-<form action="/user_projects" method="POST">
-    <input type="hidden" value={{username}} name="username"><br><br>
-    <button type="submit">My Projects</button><br><br>
-</form>
+<div>
+    <table>
+        <tr>
+            <td>Username: {{username}}</td>
+        </tr>
+    </table>
+</div>
+<div>
+    <form action="/user_projects" method="POST">
+        <div>
+            <input type="hidden" value={{username}} name="username"><br><br>
+        </div>
+        <div>
+            <button type="submit">My Projects</button><br><br>
+        </div>
+    </form>
+</div>
+<div class="container">
+    <form method="post" action="/add_project">
+        <h1>Add a Project</h1>
+        <div>
+            <label for="project_name">Project Name</label>
+        </div>
+        <div>
+            <input type="text" id="project_name" name="project_name" />
+        </div>
+        <div>
+            <label for="project_description">Project Description</label>
+        </div>
+        <div>
+            <textarea type="text" rows="10" cols="100" id="project_description" name="project_description"></textarea>
+        </div>
+        <div>
+            <input type="hidden" id="username" value={{username}} name="username">
+            <input type="submit" value="Add">
+        </div>
+    </form>
+</div>

@@ -336,6 +336,30 @@ app.post('/login.json', async (req, res) => {
         });
 });
 
+app.post('/add_project', async (req, res) => {
+    const query = `INSERT INTO projects (project_name,project_description) VALUES ($1,$2); INSERT INTO user_projects (username, project_name) VALUES ($3,$1)`;
+    console.log(req.body.project_name, req.body.project_description, req.body.username);
+    try {
+        await db.any(query, [req.body.project_name, req.body.project_description, req.body.username])
+        res.render('pages/home', {
+            username: user.username,
+            message: 'Added project successful'
+        });
+        console.log('successfully added')
+        res.status(200);
+
+    }
+    catch (err) {
+        res.render("pages/home", {
+            username: user.username,
+            message: 'Adding project failed'
+        });
+        res.status(500);
+        console.log(err);
+        console.log('adding failed');
+    }
+});
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
     if (!req.session.user) {
