@@ -100,3 +100,33 @@ describe('Testing Render', () => {
             });
     });
 });
+
+
+
+// 2 Unit test cases for Login feature 
+describe('Testing Login API', () => {
+    it('positive : /login', done => {
+        chai
+            .request(server)
+            .post('/login.json')
+            .send({ username: 'connor', password: 'password' })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                assert.strictEqual(res.body.message, 'Login successful');
+                done();
+            });
+    });
+
+    it('Negative : /login Checking invalid password', done => {
+        chai
+            .request(server)
+            .post('/login.json')
+            .send({ username: 'connor', password: 'thing' })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body.message).to.equals('Login failed');
+                done();
+            });
+    });
+});
+
