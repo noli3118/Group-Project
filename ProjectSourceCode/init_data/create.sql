@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 DROP TABLE IF EXISTS majors;
 CREATE TABLE  majors(
-    major_name VARCHAR(50) PRIMARY KEY,
-    major_description CHAR(60) NOT NULL
+    major_name VARCHAR(50) PRIMARY KEY
 );
 
 DROP TABLE IF EXISTS projects;
