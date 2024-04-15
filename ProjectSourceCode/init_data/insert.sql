@@ -21,3 +21,7 @@ INSERT INTO user_projects
             'connor',
             'LUUM PoE Distribution Upgrade'
         );
+
+INSERT INTO categories (category_name) VALUES ('Software Development');
+INSERT INTO categories (category_name) VALUES ('Cyber Security');
+INSERT INTO categories (category_name) VALUES ('Literature and Writing');

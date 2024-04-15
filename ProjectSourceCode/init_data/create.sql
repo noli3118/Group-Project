@@ -28,3 +28,12 @@ CREATE TABLE user_majors(
   username VARCHAR(50) NOT NULL REFERENCES users(username),
   major_name VARCHAR(50) NOT NULL REFERENCES majors(major_name)
 );
+
+CREATE TABLE IF NOT EXISTS categories (
+ category_name VARCHAR(60) PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS user_category (
+	username VARCHAR(60) NOT NULL REFERENCES users(username),
+  category_name VARCHAR(60) NOT NULL REFERENCES categories(category_name)
+);

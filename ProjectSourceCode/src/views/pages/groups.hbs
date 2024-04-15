@@ -1,0 +1,148 @@
+{{> nav}}
+{{> message}}
+<div class="card text-center">
+    <div class="card-body">
+        <div id="categories">
+          <div class="container text-center">
+            <div class="row mb-5">
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-1">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <a href="/software" style="color: black;">Software Development </a>
+                    </h5>
+                      <button type="button" style="color: blue; text-decoration:none" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#Software-Modal">
+                        Join Here
+                      </button> 
+                  </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="Software-Modal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5"> Software Development Group</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Networking, exchanging career advice, and sharing personal and class related projects.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <form method="post" action="/software">
+                                      <button type="submit" class="btn btn-primary">Join</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+              </div>
+              <div class="col">
+                <div class="card" style="width: 21rem;" id="category-card-2">
+                    {{!-- image here --}}
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <a href="/security" style="color: black;">Cyber Security </a>
+                    </h5>
+                      <button type="button" style="color: blue; text-decoration:none" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#Security-Modal">
+                        Join Here
+                      </button> 
+                  </div>
+                </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="Security-Modal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5"> Cyber Security Group</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Sharing knowledge and Projects about defending threats to programs.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <form method="post" action="/security">
+                                      <button type="submit" class="btn btn-primary">Join</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+              </div>
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-3">
+                  <div class="card-body">
+                    <h5 class="card-title">Literature and Writing</h5>
+                    <p class="card-text">Book people... Performance people... All people are welcome!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row mb-5">
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-1">
+                  <div class="card-body">
+                    <h5 class="card-title">Other </h5>
+                    <p class="card-text">Some Description.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card" style="width: 21rem;" id="category-card-2">
+                    {{!-- image here --}}
+                  <div class="card-body">
+                    <h5 class="card-title">Other1</h5>
+                    <p class="card-text">Some Description. </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-3">
+                  <div class="card-body">
+                    <h5 class="card-title">Other2</h5>
+                    <p class="card-text">Some Description.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row mb-5">
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-1">
+                  <div class="card-body">
+                    <h5 class="card-title">Other </h5>
+                    <p class="card-text">Some Description.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card" style="width: 21rem;" id="category-card-2">
+                    {{!-- image here --}}
+                  <div class="card-body">
+                    <h5 class="card-title">Other1</h5>
+                    <p class="card-text">Some Description. </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card" style="width: 18rem;" id="category-card-3">
+                  <div class="card-body">
+                    <h5 class="card-title">Other2</h5>
+                    <p class="card-text">Some Description.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
