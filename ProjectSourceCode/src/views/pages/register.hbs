@@ -5,15 +5,38 @@
         <form method="post" action="/register">
             <h1>Register</h1>
             <p>Do not include numbers in username.</p>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" />
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" />
-
-            <button type="submit">Register</button>
-            <a class="nav-link" href="/login">Click HERE for login.</a>
-
+            <div>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" />
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" />
+            </div>
+            <div>
+                <label for="major_name">Choose a major:</label>
+                <select name="major_name" id="major_name">
+                    <option value="Aerospace Engineering Sciences">Aerospace Engineering Sciences</option>
+                    <option value="Applied Mathematics">Applied Mathematics</option>
+                    <option value="Architectural Engineering">Architectural Engineering</option>
+                    <option value="Biomedical Engineering">Biomedical Engineering</option>
+                    <option value="Chemical & Biological Engineering">Chemical & Biological Engineering</option>
+                    <option value="Chemical Engineering">Chemical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Creative Technology & Design (ATLAS)">Creative Technology & Design (ATLAS)</option>
+                    <option value="Electrical & Computer Engineering">Electrical & Computer Engineering</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Engineering Physics">Engineering Physics</option>
+                    <option value="Environmental Engineering">Environmental Engineering</option>
+                    <option value="Integrated Design Engineering">Integrated Design Engineering</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit">Register</button>
+                <a class="nav-link" href="/login">Click HERE for login.</a>
+            </div>
         </form>
     </div>
 </main>

@@ -55,6 +55,7 @@ const dbConfig = {
 const user = {
     username: undefined,
     password: undefined,
+    major_name: undefined,
 };
 
 const db = pgp(dbConfig);
@@ -141,7 +142,8 @@ app.get('/majors', async (req, res) => {
 
 app.get('/home', async (req, res) => {
     res.render('pages/home', {
-        username: req.session.user.username
+        username: req.session.user.username,
+        major_name: req.session.user.major_name
     });
 });
 
@@ -177,7 +179,7 @@ app.post('/register', async (req, res) => {
     //hash the password using bcrypt library
     const hashed = await bcrypt.hash(req.body.password, 10);
 
-    const query = `INSERT INTO users (username,password) VALUES ($1,$2)`;
+    const query = `INSERT INTO users (username,password) VALUES ($1,$2); INSERT INTO user_majors (username, major_name) VALUES ($1,$3);`;
 
     try {
         if ((req.body.username).includes(1) ||
@@ -192,7 +194,7 @@ app.post('/register', async (req, res) => {
             (req.body.username).includes(0)) {
             junk.fail;
         } else {
-            await db.any(query, [req.body.username, hashed])
+            await db.any(query, [req.body.username, hashed, req.body.major_name])
             res.render('pages/login', {
                 message: 'Registration successful'
             });
@@ -215,7 +217,7 @@ app.post('/register.json', async (req, res) => {
     //hash the password using bcrypt library
     const hashed = await bcrypt.hash(req.body.password, 10);
 
-    const query = `INSERT INTO users (username,password) VALUES ($1,$2)`;
+    const query = `INSERT INTO users (username,password) VALUES ($1,$2);`;
 
     try {
         if ((req.body.username).includes(1) ||
@@ -231,7 +233,7 @@ app.post('/register.json', async (req, res) => {
         ) {
             junk.fail;
         } else {
-            await db.any(query, [req.body.username, hashed]);
+            await db.any(query, [req.body.username, hashed, req.body.major_name]);
 
             res.json({
                 status: 'success',
@@ -255,17 +257,17 @@ app.post('/login', async (req, res) => {
     // To-DO: Insert username and hashed password into the 'users' table
     const query = `SELECT *
                 FROM users
-                WHERE username = $1
-                LIMIT 1;`;
+                JOIN user_majors ON users.username = user_majors.username
+                WHERE users.username = $1;`;
 
-    console.log(query);
-    console.log(req.body.username);
     db.one(query, [req.body.username])
         //    if query execution succeeds send success message
         .then(async data => {
             let valid = await bcrypt.compare(req.body.password, data.password);
-            user.username = req.body.username;
-            user.password = req.body.password;
+            user.username = data.username;
+            user.password = data.password;
+            user.major_name = data.major_name;
+            console.log(data);
             if (!valid) {
                 res.render('pages/login.hbs', {
                     message: `Incorrect username or password`,
@@ -275,6 +277,7 @@ app.post('/login', async (req, res) => {
             else {
                 res.render('pages/home.hbs', {
                     username: user.username,
+                    major_name: user.major_name,
                     message: `Login successful`
                 });
                 req.session.user = user;
@@ -313,6 +316,7 @@ app.post('/login.json', async (req, res) => {
             let valid = await bcrypt.compare(req.body.password, data.password);
             user.username = req.body.username;
             user.password = req.body.password;
+            user.major_name = req.body.major_name;
             if (!valid) {
                 res.json({
                     message: 'Login failed'
@@ -334,6 +338,30 @@ app.post('/login.json', async (req, res) => {
         .catch(function (err) {
             return console.log('query failed' + '\n' + err);
         });
+});
+
+app.post('/add_project', async (req, res) => {
+    const query = `INSERT INTO projects (project_name,project_description) VALUES ($1,$2); INSERT INTO user_projects (username, project_name) VALUES ($3,$1)`;
+    console.log(req.body.project_name, req.body.project_description, req.body.username);
+    try {
+        await db.any(query, [req.body.project_name, req.body.project_description, req.body.username])
+        res.render('pages/home', {
+            username: user.username,
+            message: 'Added project successful'
+        });
+        console.log('successfully added')
+        res.status(200);
+
+    }
+    catch (err) {
+        res.render("pages/home", {
+            username: user.username,
+            message: 'Adding project failed'
+        });
+        res.status(500);
+        console.log(err);
+        console.log('adding failed');
+    }
 });
 
 // Authentication Middleware.

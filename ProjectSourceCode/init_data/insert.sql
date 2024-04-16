@@ -21,3 +21,60 @@ INSERT INTO user_projects
             'connor',
             'LUUM PoE Distribution Upgrade'
         );
+
+INSERT INTO majors
+    (major_name)
+    VALUES
+        (
+            'Aerospace Engineering Sciences'
+        ),
+        (
+            'Applied Mathematics'
+        ),
+        (
+            'Architectural Engineering'
+        ),
+        (
+            'Biomedical Engineering'
+        ),
+        (
+            'Chemical & Biological Engineering'
+        ),
+        (
+            'Chemical Engineering'
+        ),
+        (
+            'Civil Engineering'
+        ),
+        (
+            'Computer Science'
+        ),
+        (
+            'Creative Technology & Design (ATLAS)'
+        ),
+        (
+            'Electrical & Computer Engineering'
+        ),
+        (
+            'Electrical Engineering'
+        ),
+        (
+            'Engineering Physics'
+        ),
+        (
+            'Environmental Engineering'
+        ),
+        (
+            'Integrated Design Engineering'
+        ),
+        (
+            'Mechanical Engineering'
+        );
+
+INSERT INTO user_majors
+    (username, major_name)
+    VALUES 
+        (
+            'connor',
+            'Electrical & Computer Engineering'
+        );
