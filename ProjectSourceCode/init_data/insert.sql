@@ -78,3 +78,7 @@ INSERT INTO user_majors
             'connor',
             'Electrical & Computer Engineering'
         );
+
+INSERT INTO categories (category_name) VALUES ('Software Development');
+INSERT INTO categories (category_name) VALUES ('Cyber Security');
+INSERT INTO categories (category_name) VALUES ('Literature and Writing');
