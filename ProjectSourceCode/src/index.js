@@ -13,6 +13,11 @@ const session = require('express-session'); // To set the session object. To sto
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
 
+// 4/16 4:45 Neena added these two packages for IMAGING 
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // files will be saved to 'uploads' folder
+
+
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
 // *****************************************************
@@ -37,6 +42,26 @@ app.use(
         resave: true,
     })
 );
+
+// Serve static files from the 'public' directory
+//4/16 7:47 Neena added this line to serve files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'resources')));
+
+// 4/16 4:52 Neena added this line to serve files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+
+// Mock user middleware for testing
+app.use((req, res, next) => {
+    if (!req.session.user) {
+      req.session.user = {
+        username: 'testuser',
+        major_name: 'Computer Science' // Replace with suitable default values
+      };
+    }
+    next();
+  });
+  
+
 app.use(
     bodyParser.urlencoded({
         extended: true,
@@ -100,6 +125,28 @@ app.use(
 // *****************************************************
 
 // TODO - Include your API routes here
+
+// Route for liking a project - Neena added 4/16 10:57
+app.post('/projects/:projectName/like', async (req, res) => {
+    const projectName = req.params.projectName;
+    const username = req.session.user.username; // Assuming you have the user in the session
+
+    const query = `
+        INSERT INTO project_likes (project_name, username)
+        VALUES ($1, $2)
+        ON CONFLICT (project_name, username) 
+        DO NOTHING;`; // This avoids inserting a like if it already exists
+
+    try {
+        await db.none(query, [projectName, username]);
+        res.json({ success: true, message: 'Project liked successfully' });
+    } catch (err) {
+        console.error('Error while liking project:', err);
+        res.status(500).json({ success: false, message: 'Failed to like project' });
+    }
+});
+
+
 app.get('/welcome', (req, res) => {
     res.json({ status: 'success', message: 'Welcome!' });
 });
@@ -125,17 +172,184 @@ app.get('/logout', async (req, res) => {
 
 
 // adding paths to nav_bar pages
+//Neena added block on get authors 4/16 11:19
 app.get('/authors', async (req, res) => {
-    res.render('pages/authors.hbs')
+    const authorsQuery = `
+      SELECT u.username, m.major_name, json_agg(json_build_object('project_name', p.project_name, 'project_image', p.project_image)) AS projects
+      FROM users u
+      LEFT JOIN user_majors m ON u.username = m.username
+      LEFT JOIN user_projects up ON u.username = up.username
+      LEFT JOIN projects p ON up.project_name = p.project_name
+      GROUP BY u.username, m.major_name;
+    `;
+  
+    try {
+      const authorsData = await db.any(authorsQuery);
+      // Making sure projects are displayed even if they are null
+      const authors = authorsData.map(author => ({
+        ...author,
+        projects: author.projects[0].project_name ? author.projects : []
+      }));
+  
+      res.render('pages/authors', {
+        layout: 'main',
+        authors: authors
+      });
+    } catch (err) {
+      console.error('Error fetching authors:', err);
+      res.render('pages/error', {
+        layout: 'main',
+        message: 'Failed to load authors'
+      });
+    }
+  });
+  
+  
+
+//Neena added this block to implement the projects page 4/16 8:08
+app.get('/projects', async (req, res) => {
+    const query = `
+        SELECT p.project_name, p.project_description, p.project_image, COUNT(pl.username) AS like_count
+        FROM projects p
+        LEFT JOIN project_likes pl ON p.project_name = pl.project_name
+        GROUP BY p.project_name
+        ORDER BY p.project_name ASC;`;
+
+    try {
+        const projects = await db.any(query);
+        res.render('pages/projects', {
+            layout: 'main', // Assuming 'main' is your default layout file
+            projects: projects  // This is the data from your query
+        });
+    } catch (err) {
+        console.error('Error fetching projects:', err);
+        res.render('pages/error', {
+            layout: 'main', // Assuming 'main' is your default layout file
+            message: 'Failed to load projects'
+        });
+    }
 });
 
-app.get('/projects', async (req, res) => {
-    res.render('pages/projects.hbs')
-});
+
 
 app.get('/majors', async (req, res) => {
     res.render('pages/majors.hbs')
 });
+
+
+// Neena added this block for IMAGE PROCESSING 4/16 7:16
+
+// GET route handler for user projects
+app.get('/user_projects', async (req, res) => {
+    const query = `SELECT 
+    projects.project_name,
+    projects.project_description,
+    projects.project_image
+    FROM
+        projects
+        JOIN user_projects ON projects.project_name = user_projects.project_name
+        WHERE user_projects.username = $1
+        ORDER BY projects.project_name ASC;`;
+
+    // Replace 'testuser' with the actual username stored in the session
+    const username = req.session.user.username; 
+
+    await db.any(query, [username])
+        .then(data => {
+            console.log('User projects fetched successfully');
+            console.log(data);
+            res.render('pages/user_projects', {
+                layout: 'main', // Specify the layout you want to use. You might have a 'main' layout.
+                data: data
+            });
+        })
+        .catch(err => {
+            console.error('Error fetching user projects:', err);
+            res.render('pages/error', {
+                layout: 'main', // Specify the layout for the error page
+                message: 'Failed to load user projects'
+            });
+        });
+});
+
+
+
+//Neena added block for messaging 4/16 11:23
+
+// Route for message form page
+app.get('/message/:username', async (req, res) => {
+    // Assume you have session handling and you have the logged-in user's username
+    const loggedInUsername = req.session.user.username; // Replace with actual session username
+  
+    const receiverUsername = req.params.username; // Username of the message receiver
+  
+    // Render the message form page for the receiver
+    res.render('pages/messages', { 
+      layout: 'main',
+      receiver: receiverUsername,
+      sender: loggedInUsername 
+    });
+});
+
+
+app.get('/view_messages', async (req, res) => {
+
+    const loggedInUsername = req.session.user.username;
+
+    // SQL query to get messages sent to the logged-in user
+    const query = `
+        SELECT * FROM messages
+        WHERE receiver_username = $1
+        ORDER BY sent_at DESC;
+    `;
+
+    try {
+        const messages = await db.any(query, [loggedInUsername]);
+        res.render('pages/view_messages', {
+            layout: 'main',
+            messages: messages
+        });
+    } catch (err) {
+        console.error('Error fetching messages:', err);
+        res.render('pages/error', {
+            layout: 'main',
+            message: 'Failed to load messages'
+        });
+    }
+});
+
+
+app.get('/conversation/:username', async (req, res) => {
+    const currentUsername = req.session.user.username; // Adjust to get the current logged-in user
+    const otherUsername = req.params.username;
+    
+    try {
+        const messages = await db.any("SELECT * FROM messages WHERE (sender_username = $1 AND receiver_username = $2) OR (sender_username = $2 AND receiver_username = $1)", [currentUsername, otherUsername]);
+        
+        const formattedMessages = messages.map(message => {
+            return {
+                ...message,
+                isSent: message.sender_username === currentUsername
+            };
+        });
+
+        res.render('pages/conversation', { // Include the 'pages/' prefix here
+            otherUser: otherUsername,
+            messages: formattedMessages,
+            user: {
+                username: currentUsername // Ensure this is passed to the template for comparison
+            }
+        });
+    } catch (error) {
+        // handle error
+        console.error('Error fetching conversation:', error);
+        res.render('pages/error', { // Include the 'pages/' prefix here
+            layout: 'main',
+            message: 'Failed to load the conversation'
+        });
+    }
+});
+
 
 
 
@@ -150,7 +364,8 @@ app.get('/home', async (req, res) => {
 app.post('/user_projects', async (req, res) => {
     const query = `SELECT 
     projects.project_name,
-    projects.project_description
+    projects.project_description,
+    projects.project_image
     FROM
         projects
         JOIN user_projects ON projects.project_name = user_projects.project_name
@@ -158,6 +373,8 @@ app.post('/user_projects', async (req, res) => {
         WHERE users.username = $1
         ORDER BY projects.project_name ASC;`;
     // Query to list all the courses taken by a student
+
+    // Added line 175 to include project IMAGE Neena 4/16 6:49
 
     await db.any(query, [req.body.username])
         .then(async data => {
@@ -173,44 +390,78 @@ app.post('/user_projects', async (req, res) => {
         });
 });
 
-// Register
+// Register - REWRITTEN BY NEENA 4/16 11:09
+// app.post('/register', async (req, res) => {
+
+//     //hash the password using bcrypt library
+//     const hashed = await bcrypt.hash(req.body.password, 10);
+
+//     const query = `INSERT INTO users (username,password) VALUES ($1,$2); INSERT INTO user_majors (username, major_name) VALUES ($1,$3);`;
+
+//     try {
+//         if ((req.body.username).includes(1) ||
+//             (req.body.username).includes(2) ||
+//             (req.body.username).includes(3) ||
+//             (req.body.username).includes(4) ||
+//             (req.body.username).includes(5) ||
+//             (req.body.username).includes(6) ||
+//             (req.body.username).includes(7) ||
+//             (req.body.username).includes(8) ||
+//             (req.body.username).includes(9) ||
+//             (req.body.username).includes(0)) {
+//             junk.fail;
+//         } else {
+//             await db.any(query, [req.body.username, hashed, req.body.major_name])
+//             res.render('pages/login', {
+//                 message: 'Registration successful'
+//             });
+//             console.log('successfully added')
+//             res.status(200);
+//         }
+//     }
+//     catch (err) {
+//         res.render("pages/register", {
+//             message: 'Registration failed'
+//         });
+//         res.status(500);
+//         console.log(err);
+//         console.log('register failed');
+//     }
+
+// });
+
 app.post('/register', async (req, res) => {
-
-    //hash the password using bcrypt library
-    const hashed = await bcrypt.hash(req.body.password, 10);
-
-    const query = `INSERT INTO users (username,password) VALUES ($1,$2); INSERT INTO user_majors (username, major_name) VALUES ($1,$3);`;
-
+    // Hash the password using bcrypt library
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    
     try {
-        if ((req.body.username).includes(1) ||
-            (req.body.username).includes(2) ||
-            (req.body.username).includes(3) ||
-            (req.body.username).includes(4) ||
-            (req.body.username).includes(5) ||
-            (req.body.username).includes(6) ||
-            (req.body.username).includes(7) ||
-            (req.body.username).includes(8) ||
-            (req.body.username).includes(9) ||
-            (req.body.username).includes(0)) {
-            junk.fail;
-        } else {
-            await db.any(query, [req.body.username, hashed, req.body.major_name])
-            res.render('pages/login', {
-                message: 'Registration successful'
-            });
-            console.log('successfully added')
-            res.status(200);
+        // Check if username contains numbers using a regex pattern
+        if (/\d/.test(req.body.username)) {
+            throw new Error('Username should not contain numbers.');
         }
-    }
-    catch (err) {
-        res.render("pages/register", {
-            message: 'Registration failed'
-        });
-        res.status(500);
-        console.log(err);
-        console.log('register failed');
-    }
 
+        // Construct the query
+        const query = `
+            INSERT INTO users (username, password) VALUES ($1, $2);
+            INSERT INTO user_majors (username, major_name) VALUES ($1, $3);
+        `;
+
+        // Execute the query
+        await db.none(query, [req.body.username, hashedPassword, req.body.major_name]);
+
+        // If successful, render the login page with a success message
+        res.render('pages/login', {
+            message: 'Registration successful'
+        });
+        console.log('successfully added');
+        
+    } catch (err) {
+        // If an error occurs, render the register page with an error message
+        res.render('pages/register', {
+            message: `Registration failed: ${err.message}`
+        });
+        console.error(err);
+    }
 });
 
 app.post('/register.json', async (req, res) => {
@@ -340,29 +591,94 @@ app.post('/login.json', async (req, res) => {
         });
 });
 
-app.post('/add_project', async (req, res) => {
-    const query = `INSERT INTO projects (project_name,project_description) VALUES ($1,$2); INSERT INTO user_projects (username, project_name) VALUES ($3,$1)`;
-    console.log(req.body.project_name, req.body.project_description, req.body.username);
+// app.post('/add_project', async (req, res) => {
+//     const query = `INSERT INTO projects (project_name,project_description) VALUES ($1,$2); INSERT INTO user_projects (username, project_name) VALUES ($3,$1)`;
+//     console.log(req.body.project_name, req.body.project_description, req.body.username);
+//     try {
+//         await db.any(query, [req.body.project_name, req.body.project_description, req.body.username])
+//         res.render('pages/home', {
+//             username: user.username,
+//             message: 'Added project successful'
+//         });
+//         console.log('successfully added')
+//         res.status(200);
+
+//     }
+//     catch (err) {
+//         res.render("pages/home", {
+//             username: user.username,
+//             message: 'Adding project failed'
+//         });
+//         res.status(500);
+//         console.log(err);
+//         console.log('adding failed');
+//     }
+// });
+
+
+// 4/16 4:49 Neena added this updated add_project block for IMAGING & commented out the previous
+
+app.post('/add_project', upload.single('project_image'), async (req, res) => {
+    // Extract the text fields' data and the file info from `req.body` and `req.file`
+    const { project_name, project_description, username } = req.body;
+    const project_image = req.file ? req.file.filename : null; // This will be the uploaded file's name
+
+    // Construct the database query including the project image
+    // You need to ensure that your 'projects' table has a column to store the image filename
+    const query = `INSERT INTO projects (project_name, project_description, project_image) VALUES ($1, $2, $3);
+                   INSERT INTO user_projects (username, project_name) VALUES ($4, $1);`;
+    
     try {
-        await db.any(query, [req.body.project_name, req.body.project_description, req.body.username])
+        // Execute the query with the provided values including the project image filename
+        await db.any(query, [project_name, project_description, project_image, username]);
+        
+        // Render the home page with a success message
         res.render('pages/home', {
             username: user.username,
             message: 'Added project successful'
         });
-        console.log('successfully added')
-        res.status(200);
-
-    }
-    catch (err) {
+        
+        // Log success to the console
+        console.log('Project added successfully');
+    } catch (err) {
+        // Render the home page with an error message if something goes wrong
         res.render("pages/home", {
             username: user.username,
             message: 'Adding project failed'
         });
-        res.status(500);
-        console.log(err);
-        console.log('adding failed');
+        
+        // Log the error to the console
+        console.log('Error adding project:', err);
     }
 });
+
+// Neena added route to handle message submission 4/16 11:32
+app.post('/send_message', async (req, res) => {
+    const { receiver_username, message_text } = req.body;
+    const sender_username = req.session.user.username; // Assume you have session handling
+  
+    // SQL query to insert the new message into the 'messages' table
+    const query = `
+      INSERT INTO messages (sender_username, receiver_username, message_text)
+      VALUES ($1, $2, $3);
+    `;
+  
+    try {
+      await db.none(query, [sender_username, receiver_username, message_text]);
+      // Redirect or inform the user that the message was sent successfully
+      res.redirect('/authors'); // or wherever you want to redirect after sending the message
+    } catch (err) {
+      console.error('Error sending message:', err);
+      res.status(500).render('pages/error', {
+        layout: 'main',
+        message: 'Failed to send message'
+      });
+    }
+  });
+  
+
+
+
 
 // Authentication Middleware.
 const auth = (req, res, next) => {
