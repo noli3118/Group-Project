@@ -284,6 +284,79 @@ app.post('/software', async (req, res) => {
 });
 
 
+app.get('/literature', async (req, res) => {
+    const temp  = req.session.user.username;
+    const temp2 = 'Literature and Writing';
+    const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
+
+    await db.any(validate, [temp, temp2])
+    .then(async data => {
+        if (data != null && data.length > 0)
+        {
+            console.log('ran query');
+            console.log(data);
+            res.render('pages/literature.hbs'); 
+        }
+        else
+        {
+            res.render("pages/groups.hbs", {
+                message: 'Please join a group to view it.'
+            });
+            console.log('failed query');
+        }
+    })
+    .catch(err => {
+        console.log('ran query');
+        console.log(err);
+    });
+});
+
+
+app.post('/literature', async (req, res) => {
+    const temp  = req.session.user.username; //username
+    const temp2 = 'Literature and Writing'; // group name to join
+    const query = 'INSERT INTO user_category (username, category_name) VALUES ($1, $2)';
+
+    const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
+
+    await db.any(validate, [temp, temp2])
+    .then(async data => {
+        if (data === null || data.length === 0)
+        {
+            console.log('ran query');
+            console.log(data);
+            console.log(query)
+            await db.any(query, [temp, temp2])
+            .then(async data => {
+                console.log('ran query');
+                console.log(data);
+                res.render('pages/literature.hbs'); 
+
+            })
+            .catch(err => {
+                res.render("pages/groups.hbs", {
+                    message: 'Failed to join.'
+                });
+                console.log('ran query');
+                console.log(err);
+            });
+        }
+        else
+        {
+            res.render("pages/groups.hbs", {
+                message: 'Already joined this group.'
+            });
+            console.log('failed query');
+        }
+    })
+    .catch(err => {
+        console.log('ran query');
+        console.log(err);
+    });
+
+});
+
+
 app.get('/home', async (req, res) => {
     res.render('pages/home', {
         username: req.session.user.username,
