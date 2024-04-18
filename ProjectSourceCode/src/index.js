@@ -390,6 +390,29 @@ app.post('/user_projects', async (req, res) => {
         });
 });
 
+app.post('/authors', async (req, res) => {
+    const query = `SELECT 
+    username,
+    count(project_name)
+    FROM user_projects
+        GROUP BY username
+        ORDER BY username ASC;`;
+    // Query to list all users ordered by number of projects
+
+    await db.any(query, [req.body.username])
+        .then(async data => {
+            console.log('ran query');
+            console.log(data);
+            res.render('pages/user_projects', {
+                data
+            });
+        })
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
+        });
+});
+
 // Register
 app.post('/register', async (req, res) => {
 
