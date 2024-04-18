@@ -1,4 +1,4 @@
-fetch("/user_projects")
+fetch("/discover")
   .then((response) => response.json())
   .then((data) => {
     data.forEach((user_project) => {

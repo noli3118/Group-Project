@@ -130,7 +130,25 @@ app.get('/authors', async (req, res) => {
 });
 
 app.get('/projects', async (req, res) => {
-    res.render('pages/projects.hbs')
+    const query = `SELECT projects.*, COUNT(project_likes.project_name) OVER (PARTITION BY project_likes.project_name) as Like_Counter
+    FROM projects
+        JOIN user_projects ON projects.project_name = user_projects.project_name
+        LEFT JOIN project_likes ON project_likes.project_name = projects.project_name
+        ORDER BY Like_Counter ASC;`;
+    // Query to list all projects in order of the number of likes
+
+    await db.any(query, [req.body.username])
+        .then(async data => {
+            console.log('ran query');
+            console.log(data);
+            res.render('pages/projects', {
+                data
+            });
+        })
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
+        });
 });
 
 app.get('/majors', async (req, res) => {
@@ -364,27 +382,6 @@ app.get('/home', async (req, res) => {
     });
 });
 
-app.post('/user_projects', async (req, res) => {
-    const query = `SELECT projects.*, COUNT(project_likes.project_name) OVER (PARTITION BY project_likes.project_name) as Like_Counter
-    FROM projects
-        JOIN user_projects ON projects.project_name = user_projects.project_name
-        LEFT JOIN project_likes ON project_likes.project_name = projects.project_name
-        ORDER BY Like_Counter ASC;`;
-    // Query to list all projects in order of the number of likes
-
-    await db.any(query, [req.body.username])
-        .then(async data => {
-            console.log('ran query');
-            console.log(data);
-            res.render('pages/user_projects', {
-                data
-            });
-        })
-        .catch(err => {
-            console.log('ran query');
-            console.log(err);
-        });
-});
 
 app.post('/authors', async (req, res) => {
     const query = `SELECT 
