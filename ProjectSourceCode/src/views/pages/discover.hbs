@@ -1,3 +1,75 @@
 {{> message}}
+<h1>Welcome to the Discover Page</h1>
+<p>Explore and search through many different projects to find what fits best for you</p>
+<div id="containter">
+    <form method="get" action="">
+        <input type="text" name="project" class="project" value="$project_name"/>
+    </form>
 
-<p>Discover page</p>
+    <php
+
+// Connect to the MySQL database
+$mysqli = new mysqli("hostname", "username", "password", "database");
+
+// Check for errors
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+// Execute the SQL query
+$result = $mysqli->query("SELECT * FROM mytable");
+
+// Check for errors
+if (!$result) {
+    printf("Error: %s\n", $mysqli->error);
+    exit();
+}
+
+// Start the HTML table
+echo "<table>\n";
+
+// Print the table headers
+echo "<tr>";
+$field_info = mysqli_fetch_field($result);
+while ($field_info) {
+    printf("<th>%s</th>", $field_info->name);
+    $field_info = mysqli_fetch_field($result);
+}
+echo "</tr>\n";
+
+// Print the table rows
+while ($row = $result->fetch_assoc()) {
+    echo "<tr>";
+    foreach ($row as $col_value) {
+        printf("<td>%s</td>", $col_value);
+    }
+    echo "</tr>\n";
+}
+
+// End the HTML table
+echo "</table>\n";
+
+// Free the result set
+$result->free();
+
+// Close the database connection
+$mysqli->close();
+
+>
+  <!--  
+ <table>
+  <tbody>
+   <tr>
+    <td></td>
+   </tr>
+   <tr>
+    <td>Row 2, Cell 1</td>
+   </tr>
+   <tr>
+    <td>Row 3, Cell 1</td>
+   </tr>
+  </tbody>
+ </table>
+</div>
+-->
