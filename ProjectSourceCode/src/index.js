@@ -365,16 +365,12 @@ app.get('/home', async (req, res) => {
 });
 
 app.post('/user_projects', async (req, res) => {
-    const query = `SELECT 
-    projects.project_name,
-    projects.project_description
-    FROM
-        projects
+    const query = `SELECT projects.*, COUNT(project_likes.project_name) OVER (PARTITION BY project_likes.project_name) as Like_Counter
+    FROM projects
         JOIN user_projects ON projects.project_name = user_projects.project_name
-        JOIN users ON users.username = user_projects.username
-        WHERE users.username = $1
-        ORDER BY projects.project_name ASC;`;
-    // Query to list all the courses taken by a student
+        LEFT JOIN project_likes ON project_likes.project_name = projects.project_name
+        ORDER BY Like_Counter ASC;`;
+    // Query to list all projects in order of the number of likes
 
     await db.any(query, [req.body.username])
         .then(async data => {
@@ -396,7 +392,7 @@ app.post('/authors', async (req, res) => {
     count(project_name) AS project_count
     FROM user_projects
         GROUP BY username
-        ORDER BY username ASC;`;
+        ORDER BY project_count ASC;`;
     // Query to list all users ordered by number of projects
 
     await db.any(query, [req.body.username])
