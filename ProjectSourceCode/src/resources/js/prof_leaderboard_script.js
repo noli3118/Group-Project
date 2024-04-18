@@ -10,7 +10,7 @@ fetch("/authors")
 
       // Update the content of the cloned template with the employee data we queried from the backend
       card.querySelector('h4').innerText = username;
-      card.querySelector('h4').innerText = project_count;
+      card.querySelector('h3').innerText = project_count;
 
       // Append the card as a child with the employee data to the <body> element on our page
       document.body.appendChild(card);

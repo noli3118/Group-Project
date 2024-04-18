@@ -393,7 +393,7 @@ app.post('/user_projects', async (req, res) => {
 app.post('/authors', async (req, res) => {
     const query = `SELECT 
     username,
-    count(project_name)
+    count(project_name) AS project_count
     FROM user_projects
         GROUP BY username
         ORDER BY username ASC;`;
@@ -403,7 +403,7 @@ app.post('/authors', async (req, res) => {
         .then(async data => {
             console.log('ran query');
             console.log(data);
-            res.render('pages/user_projects', {
+            res.render('pages/authors', {
                 data
             });
         })
