@@ -146,9 +146,6 @@ app.post('/projects/:projectName/like', async (req, res) => {
     }
 });
 
-app.post('/search', (req, res) => {
-    res.render('pages/search.hbs'); //this will call the /anotherRoute route in the API
-});
 
 app.get('/welcome', (req, res) => {
     res.json({ status: 'success', message: 'Welcome!' });
@@ -634,6 +631,12 @@ app.post('/user_projects', async (req, res) => {
 //     }
 
 // });
+
+app.post('/search', (req, res) => {
+    res.render('pages/search', {
+        search: req.body.search
+    });
+});
 
 app.post('/register', async (req, res) => {
     // Hash the password using bcrypt library
