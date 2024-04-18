@@ -21,6 +21,19 @@
                 {{/if}}
             </form>
         </td> --}}
+
+        <td>
+            {{#if project_image}}
+            <!-- Add a class name to the img tag -->
+            <img src="/uploads/{{project_image}}" alt="Project Image" class="project-image">
+            {{else}}
+            No Image Available
+            {{/if}}
+        </td>    
     </tr>
     {{/each}}
 </table>
+
+
+
+

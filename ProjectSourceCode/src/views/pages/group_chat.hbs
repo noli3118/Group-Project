@@ -1,0 +1,68 @@
+{{> nav}}
+<link rel="stylesheet" href="/path_to_your_style/style.css"> <!-- Correct the path as needed -->
+
+<h1>Group Chat: {{group_name}}</h1>
+<div class="messages">
+  {{#each messages}}
+    <div class="message {{#if isSent}}sent{{else}}received{{/if}}">
+      <div class="message-header">
+        {{#if isSent}}
+          <strong>You</strong>
+        {{else}}
+          <strong>{{sender_username}}</strong>
+        {{/if}}
+      </div>
+      <p>{{message_text}}</p>
+      <span>{{sent_at}}</span>
+    </div>
+  {{/each}}
+</div>
+
+<!-- Form for sending messages -->
+<form action="/group/{{group_name}}/send_message" method="POST">
+  <textarea name="message_text" required placeholder="Type your message here..."></textarea>
+  <button type="submit">Send</button>
+</form>
+
+<script>
+  const form = document.querySelector('form');
+  const messagesContainer = document.querySelector('.messages');
+  const textarea = document.querySelector('textarea[name="message_text"]');
+  const groupName = "{{group_name}}";
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const messageText = textarea.value;
+
+    // Send the message with fetch API
+    fetch(`/group/${groupName}/send_message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message_text: messageText }),
+    })
+    .then(response => {
+      if (response.ok) {
+        // Create new message element
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', 'sent');
+        messageElement.innerHTML = `
+          <p>${messageText}</p>
+          <span>Just now</span>
+        `;
+        // Append new message to the conversation
+        messagesContainer.appendChild(messageElement);
+        // Scroll to the bottom of the conversation
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // Clear the input field
+        textarea.value = '';
+      } else {
+        throw new Error('Failed to send message');
+      }
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
+  });
+</script>

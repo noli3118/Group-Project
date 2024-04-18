@@ -1,2 +1,29 @@
 {{> nav}}
-<h1> Authors Page </h1>
+<h1>Authors</h1>
+<table>
+  <tr>
+    <th>Username</th>
+    <th>Major</th>
+    <th>Projects</th>
+    <th>Message</th>
+  </tr>
+  {{#each authors}}
+    <tr>
+      <td>{{username}}</td>
+      <td>{{major_name}}</td>
+      <td>
+        {{#each projects}}
+          <p>{{project_name}}</p>
+          {{#if project_image}}
+            <img src="/uploads/{{project_image}}" alt="{{project_name}}" class="project-image"/>
+          {{/if}}
+        {{/each}}
+      </td>
+      <td>
+        <a href="/conversation/{{username}}" class="btn btn-primary">Message</a>
+      </td>
+    </tr>
+  {{/each}}
+
+</table>
+

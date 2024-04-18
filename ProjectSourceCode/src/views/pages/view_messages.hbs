@@ -1,0 +1,10 @@
+{{> nav}}
+<h1>Messages</h1>
+<div>
+  {{#each messages}}
+    <div class="message">
+      <strong>From:</strong> {{sender_username}} <strong>Sent at:</strong> {{sent_at}}
+      <p>{{message_text}}</p>
+    </div>
+  {{/each}}
+</div>
