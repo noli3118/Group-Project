@@ -53,14 +53,14 @@ app.use('/uploads', express.static('uploads'));
 // Mock user middleware for testing
 app.use((req, res, next) => {
     if (!req.session.user) {
-      req.session.user = {
-        username: 'testuser',
-        major_name: 'Computer Science' // Replace with suitable default values
-      };
+        req.session.user = {
+            username: 'testuser',
+            major_name: 'Computer Science' // Replace with suitable default values
+        };
     }
     next();
-  });
-  
+});
+
 
 app.use(
     bodyParser.urlencoded({
@@ -146,6 +146,9 @@ app.post('/projects/:projectName/like', async (req, res) => {
     }
 });
 
+app.post('/search', (req, res) => {
+    res.render('pages/search.hbs'); //this will call the /anotherRoute route in the API
+});
 
 app.get('/welcome', (req, res) => {
     res.json({ status: 'success', message: 'Welcome!' });
@@ -182,29 +185,29 @@ app.get('/authors', async (req, res) => {
       LEFT JOIN projects p ON up.project_name = p.project_name
       GROUP BY u.username, m.major_name;
     `;
-  
+
     try {
-      const authorsData = await db.any(authorsQuery);
-      // Making sure projects are displayed even if they are null
-      const authors = authorsData.map(author => ({
-        ...author,
-        projects: author.projects[0].project_name ? author.projects : []
-      }));
-  
-      res.render('pages/authors', {
-        layout: 'main',
-        authors: authors
-      });
+        const authorsData = await db.any(authorsQuery);
+        // Making sure projects are displayed even if they are null
+        const authors = authorsData.map(author => ({
+            ...author,
+            projects: author.projects[0].project_name ? author.projects : []
+        }));
+
+        res.render('pages/authors', {
+            layout: 'main',
+            authors: authors
+        });
     } catch (err) {
-      console.error('Error fetching authors:', err);
-      res.render('pages/error', {
-        layout: 'main',
-        message: 'Failed to load authors'
-      });
+        console.error('Error fetching authors:', err);
+        res.render('pages/error', {
+            layout: 'main',
+            message: 'Failed to load authors'
+        });
     }
-  });
-  
-  
+});
+
+
 
 //Neena added this block to implement the projects page 4/16 8:08
 app.get('/projects', async (req, res) => {
@@ -240,7 +243,7 @@ app.get('/groups', async (req, res) => {
     res.render('pages/groups.hbs')
 });
 
-<<<<<<< HEAD
+
 // Neena added this block for IMAGE PROCESSING 4/16 7:16
 
 // GET route handler for user projects
@@ -256,7 +259,7 @@ app.get('/user_projects', async (req, res) => {
         ORDER BY projects.project_name ASC;`;
 
     // Replace 'testuser' with the actual username stored in the session
-    const username = req.session.user.username; 
+    const username = req.session.user.username;
 
     await db.any(query, [username])
         .then(data => {
@@ -284,188 +287,178 @@ app.get('/user_projects', async (req, res) => {
 app.get('/message/:username', async (req, res) => {
     // Assume you have session handling and you have the logged-in user's username
     const loggedInUsername = req.session.user.username; // Replace with actual session username
-  
+
     const receiverUsername = req.params.username; // Username of the message receiver
-  
+
     // Render the message form page for the receiver
-    res.render('pages/messages', { 
-      layout: 'main',
-      receiver: receiverUsername,
-      sender: loggedInUsername 
-=======
+    res.render('pages/messages', {
+        layout: 'main',
+        receiver: receiverUsername,
+        sender: loggedInUsername
+    });
+});
+
+
 app.get('/security', async (req, res) => {
-    const temp  = req.session.user.username;
+    const temp = req.session.user.username;
     const temp2 = 'Cyber Security';
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data != null && data.length > 0)
-        {
+        .then(async data => {
+            if (data != null && data.length > 0) {
+                console.log('ran query');
+                console.log(data);
+                res.render('pages/security.hbs');
+            }
+            else {
+                res.render("pages/groups.hbs", {
+                    message: 'Please join a group to view it.'
+                });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
             console.log('ran query');
-            console.log(data);
-            res.render('pages/security.hbs'); 
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Please join a group to view it.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
-    });
+            console.log(err);
+        });
 });
 
 app.post('/security', async (req, res) => {
-    const temp  = req.session.user.username; //username
+    const temp = req.session.user.username; //username
     const temp2 = 'Cyber Security'; // group name to join
     const query = 'INSERT INTO user_category (username, category_name) VALUES ($1, $2)';
 
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data === null || data.length === 0)
-        {
-            console.log('ran query');
-            console.log(data);
-            console.log(query)
-            await db.any(query, [temp, temp2])
-            .then(async data => {
+        .then(async data => {
+            if (data === null || data.length === 0) {
                 console.log('ran query');
                 console.log(data);
-                res.render('pages/security.hbs'); 
+                console.log(query)
+                await db.any(query, [temp, temp2])
+                    .then(async data => {
+                        console.log('ran query');
+                        console.log(data);
+                        res.render('pages/security.hbs');
 
-            })
-            .catch(err => {
+                    })
+                    .catch(err => {
+                        res.render("pages/groups.hbs", {
+                            message: 'Failed to join.'
+                        });
+                        console.log('ran query');
+                        console.log(err);
+                    });
+            }
+            else {
                 res.render("pages/groups.hbs", {
-                    message: 'Failed to join.'
+                    message: 'Already joined this group.'
                 });
-                console.log('ran query');
-                console.log(err);
-            });
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Already joined this group.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
-    });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
+        });
 
 });
 
 app.get('/software', async (req, res) => {
-    const temp  = req.session.user.username;
+    const temp = req.session.user.username;
     const temp2 = 'Software Development';
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data != null && data.length > 0)
-        {
+        .then(async data => {
+            if (data != null && data.length > 0) {
+                console.log('ran query');
+                console.log(data);
+                res.render('pages/software.hbs');
+            }
+            else {
+                res.render("pages/groups.hbs", {
+                    message: 'Please join a group to view it.'
+                });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
             console.log('ran query');
-            console.log(data);
-            res.render('pages/software.hbs'); 
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Please join a group to view it.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
-    });
+            console.log(err);
+        });
 });
 
 app.post('/software', async (req, res) => {
-    const temp  = req.session.user.username; //username
+    const temp = req.session.user.username; //username
     const temp2 = 'Software Development'; // group name to join
     const query = 'INSERT INTO user_category (username, category_name) VALUES ($1, $2)';
 
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data === null || data.length === 0)
-        {
-            console.log('ran query');
-            console.log(data);
-            console.log(query)
-            await db.any(query, [temp, temp2])
-            .then(async data => {
+        .then(async data => {
+            if (data === null || data.length === 0) {
                 console.log('ran query');
                 console.log(data);
-                res.render('pages/software.hbs'); 
+                console.log(query)
+                await db.any(query, [temp, temp2])
+                    .then(async data => {
+                        console.log('ran query');
+                        console.log(data);
+                        res.render('pages/software.hbs');
 
-            })
-            .catch(err => {
+                    })
+                    .catch(err => {
+                        res.render("pages/groups.hbs", {
+                            message: 'Failed to join.'
+                        });
+                        console.log('ran query');
+                        console.log(err);
+                    });
+            }
+            else {
                 res.render("pages/groups.hbs", {
-                    message: 'Failed to join.'
+                    message: 'Already joined this group.'
                 });
-                console.log('ran query');
-                console.log(err);
-            });
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Already joined this group.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
-    });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
+        });
 
 });
 
 
 app.get('/literature', async (req, res) => {
-    const temp  = req.session.user.username;
+    const temp = req.session.user.username;
     const temp2 = 'Literature and Writing';
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data != null && data.length > 0)
-        {
+        .then(async data => {
+            if (data != null && data.length > 0) {
+                console.log('ran query');
+                console.log(data);
+                res.render('pages/literature.hbs');
+            }
+            else {
+                res.render("pages/groups.hbs", {
+                    message: 'Please join a group to view it.'
+                });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
             console.log('ran query');
-            console.log(data);
-            res.render('pages/literature.hbs'); 
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Please join a group to view it.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
->>>>>>> connor_dev
-    });
+            console.log(err);
+        });
 });
 
-
-<<<<<<< HEAD
 app.get('/view_messages', async (req, res) => {
 
     const loggedInUsername = req.session.user.username;
@@ -496,10 +489,10 @@ app.get('/view_messages', async (req, res) => {
 app.get('/conversation/:username', async (req, res) => {
     const currentUsername = req.session.user.username; // Adjust to get the current logged-in user
     const otherUsername = req.params.username;
-    
+
     try {
         const messages = await db.any("SELECT * FROM messages WHERE (sender_username = $1 AND receiver_username = $2) OR (sender_username = $2 AND receiver_username = $1)", [currentUsername, otherUsername]);
-        
+
         const formattedMessages = messages.map(message => {
             return {
                 ...message,
@@ -524,54 +517,47 @@ app.get('/conversation/:username', async (req, res) => {
     }
 });
 
-
-
-=======
 app.post('/literature', async (req, res) => {
-    const temp  = req.session.user.username; //username
+    const temp = req.session.user.username; //username
     const temp2 = 'Literature and Writing'; // group name to join
     const query = 'INSERT INTO user_category (username, category_name) VALUES ($1, $2)';
 
     const validate = 'SELECT category_name FROM user_category WHERE username = $1 AND category_name = $2';
 
     await db.any(validate, [temp, temp2])
-    .then(async data => {
-        if (data === null || data.length === 0)
-        {
-            console.log('ran query');
-            console.log(data);
-            console.log(query)
-            await db.any(query, [temp, temp2])
-            .then(async data => {
+        .then(async data => {
+            if (data === null || data.length === 0) {
                 console.log('ran query');
                 console.log(data);
-                res.render('pages/literature.hbs'); 
+                console.log(query)
+                await db.any(query, [temp, temp2])
+                    .then(async data => {
+                        console.log('ran query');
+                        console.log(data);
+                        res.render('pages/literature.hbs');
 
-            })
-            .catch(err => {
+                    })
+                    .catch(err => {
+                        res.render("pages/groups.hbs", {
+                            message: 'Failed to join.'
+                        });
+                        console.log('ran query');
+                        console.log(err);
+                    });
+            }
+            else {
                 res.render("pages/groups.hbs", {
-                    message: 'Failed to join.'
+                    message: 'Already joined this group.'
                 });
-                console.log('ran query');
-                console.log(err);
-            });
-        }
-        else
-        {
-            res.render("pages/groups.hbs", {
-                message: 'Already joined this group.'
-            });
-            console.log('failed query');
-        }
-    })
-    .catch(err => {
-        console.log('ran query');
-        console.log(err);
-    });
+                console.log('failed query');
+            }
+        })
+        .catch(err => {
+            console.log('ran query');
+            console.log(err);
+        });
 
 });
->>>>>>> connor_dev
-
 
 app.get('/home', async (req, res) => {
     res.render('pages/home', {
@@ -581,7 +567,7 @@ app.get('/home', async (req, res) => {
 });
 
 app.post('/user_projects', async (req, res) => {
-    const query = `SELECT 
+    const query = `SELECT
     projects.project_name,
     projects.project_description,
     projects.project_image
@@ -652,7 +638,7 @@ app.post('/user_projects', async (req, res) => {
 app.post('/register', async (req, res) => {
     // Hash the password using bcrypt library
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    
+
     try {
         // Check if username contains numbers using a regex pattern
         if (/\d/.test(req.body.username)) {
@@ -673,7 +659,7 @@ app.post('/register', async (req, res) => {
             message: 'Registration successful'
         });
         console.log('successfully added');
-        
+
     } catch (err) {
         // If an error occurs, render the register page with an error message
         res.render('pages/register', {
@@ -846,17 +832,17 @@ app.post('/add_project', upload.single('project_image'), async (req, res) => {
     // You need to ensure that your 'projects' table has a column to store the image filename
     const query = `INSERT INTO projects (project_name, project_description, project_image) VALUES ($1, $2, $3);
                    INSERT INTO user_projects (username, project_name) VALUES ($4, $1);`;
-    
+
     try {
         // Execute the query with the provided values including the project image filename
         await db.any(query, [project_name, project_description, project_image, username]);
-        
+
         // Render the home page with a success message
         res.render('pages/home', {
             username: user.username,
             message: 'Added project successful'
         });
-        
+
         // Log success to the console
         console.log('Project added successfully');
     } catch (err) {
@@ -865,7 +851,7 @@ app.post('/add_project', upload.single('project_image'), async (req, res) => {
             username: user.username,
             message: 'Adding project failed'
         });
-        
+
         // Log the error to the console
         console.log('Error adding project:', err);
     }
@@ -875,26 +861,26 @@ app.post('/add_project', upload.single('project_image'), async (req, res) => {
 app.post('/send_message', async (req, res) => {
     const { receiver_username, message_text } = req.body;
     const sender_username = req.session.user.username; // Assume you have session handling
-  
+
     // SQL query to insert the new message into the 'messages' table
     const query = `
       INSERT INTO messages (sender_username, receiver_username, message_text)
       VALUES ($1, $2, $3);
     `;
-  
+
     try {
-      await db.none(query, [sender_username, receiver_username, message_text]);
-      // Redirect or inform the user that the message was sent successfully
-      res.redirect('/authors'); // or wherever you want to redirect after sending the message
+        await db.none(query, [sender_username, receiver_username, message_text]);
+        // Redirect or inform the user that the message was sent successfully
+        res.redirect('/authors'); // or wherever you want to redirect after sending the message
     } catch (err) {
-      console.error('Error sending message:', err);
-      res.status(500).render('pages/error', {
-        layout: 'main',
-        message: 'Failed to send message'
-      });
+        console.error('Error sending message:', err);
+        res.status(500).render('pages/error', {
+            layout: 'main',
+            message: 'Failed to send message'
+        });
     }
-  });
-  
+});
+
 
 
 
