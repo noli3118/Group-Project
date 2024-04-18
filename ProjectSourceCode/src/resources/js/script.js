@@ -1,7 +1,7 @@
-fetch("/projects")
+fetch("/user_projects")
   .then((response) => response.json())
   .then((data) => {
-    data.forEach((employee) => {
+    data.forEach((user_project) => {
       // Select the <template> we created in index.html
       const cardTemplate = document.querySelector('template');
 
