@@ -1,18 +1,19 @@
 
 INSERT INTO majors (major_name) VALUES
 ('Computer Science'),
-('Aerospace Engineering'),
+('Aerospace Engineering Sciences'),
 ('Applied Mathematics'),
 ('Architectural Engineering'),
 ('Biomedical Engineering'),
+('Chemical and Biological Engineering'),
 ('Chemical Engineering'),
 ('Civil Engineering'),
 ('Creative Technology & Design (ATLAS)'),
 ('Electrical Engineering'),
-('Computer Engineering'),
+('Electrical and Computer Engineering'),
 ('Engineering Physics'),
 ('Environmental Engineering'),
-('Integrated Design'),
+('Integrated Design Engineering'),
 ('Mechanical Engineering');
 
 INSERT INTO projects (project_name, project_description, project_image) VALUES
@@ -30,43 +31,45 @@ INSERT INTO users (username, password) VALUES
 ('TEST', '$2b$10$2QVwpqhqDk0ekfOI4IYQSO6S/hGpb2zBz1RYwQJY2Yx3qafdUyIRW'),
 ('neenatestuser', '$2b$10$8hfg8SveYhj.Mbn60lsZ0etokTaPfn2.NkTTX7u1f7ZKzKOrOnhH6');
 
-INSERT INTO messages (messages_id, sender_username, receiver_username, message_text, sent_at) VALUES
-(1, 'neenatestuser', 'TEST', 'hi!', '2024-04-17 06:08:21.429176'),
-(2, 'TEST', 'neena', 'howdy!', '2024-04-17 06:21:02.698427'),
-(3, 'TEST', 'neena', 'How are you?', '2024-04-17 21:52:08.960972'),
-(4, 'neenatestuser', 'TEST', 'How are you!', '2024-04-17 21:52:57.641208'),
-(5, 'neenatestuser', 'TEST', 'I am good!', '2024-04-17 22:01:54.1078'),
-(6, 'neenatestuser', 'TEST', 'I am working on a new project!', '2024-04-17 22:02:09.697118'),
-(7, 'TEST', 'neenatestuser', 'That''s so cool! what kind of project?', '2024-04-17 22:12:04.70412'),
-(8, 'TEST', 'neenatestuser', 'When did you start?', '2024-04-17 22:15:11.870504'),
-(9, 'TEST', 'neenatestuser', 'I am working on a new project too!', '2024-04-17 22:28:41.908964'),
-(10, 'TEST', 'neenatestuser', 'Test Message during Meeting 5:03', '2024-04-17 23:03:32.408801');
+INSERT INTO messages (sender_username, receiver_username, message_text, sent_at) VALUES
+('neenatestuser', 'TEST', 'hi!', '2024-04-17 06:08:21.429176'),
+('TEST', 'neena', 'howdy!', '2024-04-17 06:21:02.698427'),
+('TEST', 'neena', 'How are you?', '2024-04-17 21:52:08.960972'),
+('neenatestuser', 'TEST', 'How are you!', '2024-04-17 21:52:57.641208'),
+('neenatestuser', 'TEST', 'I am good!', '2024-04-17 22:01:54.1078'),
+('neenatestuser', 'TEST', 'I am working on a new project!', '2024-04-17 22:02:09.697118'),
+('TEST', 'neenatestuser', 'That''s so cool! what kind of project?', '2024-04-17 22:12:04.70412'),
+('TEST', 'neenatestuser', 'When did you start?', '2024-04-17 22:15:11.870504'),
+('TEST', 'neenatestuser', 'I am working on a new project too!', '2024-04-17 22:28:41.908964'),
+('TEST', 'neenatestuser', 'Test Message during Meeting 5:03', '2024-04-17 23:03:32.408801');
 
-INSERT INTO user_majors (major_id, username, major_name) VALUES
-(1, 'neena', 'Computer Science'),
-(2, 'TEST', 'Computer Science'),
-(3, 'neenatestuser', 'Computer Science');
+INSERT INTO user_majors (username, major_name) VALUES
+('connor', 'Electrical and Computer Engineering'),
+('johndoe', 'Mechanical Engineering'),
+('neena', 'Computer Science'),
+('TEST', 'Computer Science'),
+('neenatestuser', 'Computer Science');
 
 
-INSERT INTO user_projects (project_id, username, project_name, project_image) VALUES
-(1, 'connor', 'LUUM PoE Distribution Upgrade', NULL),
-(2, 'TEST', 'Test Project 1', NULL),
-(3, 'TEST', 'Test Project 2', NULL),
-(4, 'TEST', 'Test 3 Image', NULL),
-(5, 'TEST', 'Test 4 IMAGE', NULL),
-(6, 'TEST', 'Test Project During Meeting', NULL);
+INSERT INTO user_projects (username, project_name, project_image) VALUES
+('connor', 'LUUM PoE Distribution Upgrade', NULL),
+('TEST', 'Test Project 1', NULL),
+('TEST', 'Test Project 2', NULL),
+('TEST', 'Test 3 Image', NULL),
+('TEST', 'Test 4 IMAGE', NULL),
+('TEST', 'Test Project During Meeting', NULL);
 
-INSERT INTO project_likes (likes_id, project_name, username) VALUES
-(1, 'LUUM PoE Distribution Upgrade', 'TEST'),
-(2, 'Test 3 Image', 'TEST'),
-(3, 'Test 4 IMAGE', 'TEST'),
-(4, 'Test Project 1', 'TEST'),
-(5, 'Test Project 2', 'TEST'),
-(6, 'LUUM PoE Distribution Upgrade', 'neenatestuser'),
-(7, 'Test 3 Image', 'neenatestuser'),
-(8, 'Test 4 IMAGE', 'neenatestuser'),
-(9, 'Test Project 1', 'neenatestuser'),
-(10, 'Test Project During Meeting', 'TEST');
+INSERT INTO project_likes (project_name, username) VALUES
+('LUUM PoE Distribution Upgrade', 'TEST'),
+('Test 3 Image', 'TEST'),
+('Test 4 IMAGE', 'TEST'),
+('Test Project 1', 'TEST'),
+('Test Project 2', 'TEST'),
+('LUUM PoE Distribution Upgrade', 'neenatestuser'),
+('Test 3 Image', 'neenatestuser'),
+('Test 4 IMAGE', 'neenatestuser'),
+('Test Project 1', 'neenatestuser'),
+('Test Project During Meeting', 'TEST');
 
 
 
