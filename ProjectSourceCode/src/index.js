@@ -170,6 +170,11 @@ app.get('/logout', async (req, res) => {
     res.render('pages/logout.hbs')
 });
 
+app.post('/search', (req, res) => {
+    res.render('pages/search', {
+        search: req.body.search
+    });
+});
 
 // adding paths to nav_bar pages
 //Neena added block on get authors 4/16 11:19
@@ -232,14 +237,9 @@ app.get('/projects', async (req, res) => {
 
 
 
-app.get('/majors', async (req, res) => {
-    res.render('pages/majors.hbs')
-});
-
 app.get('/groups', async (req, res) => {
     res.render('pages/groups.hbs')
 });
-
 
 // Neena added this block for IMAGE PROCESSING 4/16 7:16
 
@@ -292,9 +292,8 @@ app.get('/message/:username', async (req, res) => {
         layout: 'main',
         receiver: receiverUsername,
         sender: loggedInUsername
-    });
+    });  // This closing bracket and parenthesis were missing
 });
-
 
 app.get('/security', async (req, res) => {
     const temp = req.session.user.username;
@@ -320,6 +319,69 @@ app.get('/security', async (req, res) => {
             console.log(err);
         });
 });
+
+app.get('/group/:group_name', async (req, res) => {
+    const group_name = req.params.group_name;
+    const username = req.session.user.username;
+
+    try {
+        // Fetch messages for this group
+        const messages = await db.any('SELECT * FROM group_messages WHERE group_name = $1 ORDER BY sent_at DESC', [group_name]);
+        // Render the group chat page
+        res.render('pages/group_chat', {
+            layout: 'main',
+            group_name: group_name,
+            messages: messages,
+            username: username
+        });
+    } catch (err) {
+        console.error('Error getting group messages:', err);
+        res.status(500).send('Failed to load group chat.');
+    }
+});
+
+app.post('/group/:group_name/send_message', async (req, res) => {
+    const group_name = req.params.group_name;
+    const { message_text } = req.body;
+    const sender_username = req.session.user.username;
+
+    try {
+        await db.none('INSERT INTO group_messages (group_name, sender_username, message_text) VALUES ($1, $2, $3)', [group_name, sender_username, message_text]);
+        res.redirect(`/group/${group_name}`); // Redirect back to the group chat
+    } catch (err) {
+        console.error('Error sending group message:', err);
+        res.status(500).send('Failed to send message.');
+    }
+});
+
+
+
+app.post('/join_group', async (req, res) => {
+    const { group_name } = req.body;
+    const username = req.session.user.username;
+
+    try {
+        const existingMemberCheck = 'SELECT 1 FROM group_members WHERE username = $1 AND group_name = $2';
+        const isMember = await db.oneOrNone(existingMemberCheck, [username, group_name]);
+
+        if (!isMember) {
+            await db.none('INSERT INTO group_members (username, group_name) VALUES ($1, $2)', [username, group_name]);
+            res.redirect(`/group/${group_name}`);
+        } else {
+            // If the user is already a member of the group, maybe redirect back to the groups page with a message
+            res.render("pages/groups.hbs", {
+                message: 'You have already joined this group.'
+            });
+        }
+    } catch (err) {
+        console.error('Error joining group:', err);
+        res.status(500).send('Failed to join group.');
+    }
+});
+
+
+
+
 
 app.post('/security', async (req, res) => {
     const temp = req.session.user.username; //username
@@ -456,6 +518,7 @@ app.get('/literature', async (req, res) => {
         });
 });
 
+
 app.get('/view_messages', async (req, res) => {
 
     const loggedInUsername = req.session.user.username;
@@ -514,6 +577,8 @@ app.get('/conversation/:username', async (req, res) => {
     }
 });
 
+
+
 app.post('/literature', async (req, res) => {
     const temp = req.session.user.username; //username
     const temp2 = 'Literature and Writing'; // group name to join
@@ -556,6 +621,7 @@ app.post('/literature', async (req, res) => {
 
 });
 
+
 app.get('/home', async (req, res) => {
     res.render('pages/home', {
         username: req.session.user.username,
@@ -564,7 +630,7 @@ app.get('/home', async (req, res) => {
 });
 
 app.post('/user_projects', async (req, res) => {
-    const query = `SELECT
+    const query = `SELECT 
     projects.project_name,
     projects.project_description,
     projects.project_image
@@ -631,12 +697,6 @@ app.post('/user_projects', async (req, res) => {
 //     }
 
 // });
-
-app.post('/search', (req, res) => {
-    res.render('pages/search', {
-        search: req.body.search
-    });
-});
 
 app.post('/register', async (req, res) => {
     // Hash the password using bcrypt library
