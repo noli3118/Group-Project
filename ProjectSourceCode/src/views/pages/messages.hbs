@@ -1,0 +1,8 @@
+{{> nav}}
+<h1>Send a Message to {{receiver}}</h1>
+<form action="/send_message" method="POST">
+  <textarea name="message_text" required></textarea>
+  <input type="hidden" name="receiver_username" value="{{receiver}}">
+  <button type="submit">Send</button>
+</form>
+

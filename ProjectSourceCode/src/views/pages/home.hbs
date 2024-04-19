@@ -1,4 +1,4 @@
-{{> nav}}
+{{!-- {{> nav}}
 
 {{>message}}
 <h1>Welcome!</h1>
@@ -37,6 +37,71 @@
         </div>
         <div>
             <textarea type="text" rows="10" cols="100" id="project_description" name="project_description"></textarea>
+        </div>
+        <div>
+            <input type="hidden" id="username" value={{username}} name="username">
+            <input type="submit" value="Add">
+        </div>
+    </form>
+</div> --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- 4/12 4:36 pm Neena added these lines BELOW - IMAGING PURPOSES: --}}
+
+{{> nav}}
+
+{{>message}}
+<h1>Welcome!</h1>
+<div>
+    <table>
+        <tr>
+            <td>Username: {{username}}</td>
+        </tr>
+        <tr>
+            <td>Major: {{major_name}}</td>
+        </tr>
+    </table>
+</div>
+<div>
+    <form action="/user_projects" method="POST">
+        <div>
+            <input type="hidden" value={{username}} name="username"><br><br>
+        </div>
+        <div>
+            <button type="submit">My Projects</button><br><br>
+        </div>
+    </form>
+</div>
+<div class="container">
+    <form method="post" action="/add_project" enctype="multipart/form-data">
+        <h1>Add a Project</h1>
+        <div>
+            <label for="project_name">Project Name</label>
+        </div>
+        <div>
+            <input type="text" id="project_name" name="project_name" />
+        </div>
+        <div>
+            <label for="project_description">Project Description</label>
+        </div>
+        <div>
+            <textarea id="project_description" name="project_description" rows="10" cols="100"></textarea>
+        </div>
+        <div>
+            <label for="project_image">Project Image</label>
+            <input type="file" id="project_image" name="project_image" />
         </div>
         <div>
             <input type="hidden" id="username" value={{username}} name="username">

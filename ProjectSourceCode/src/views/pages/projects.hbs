@@ -1,2 +1,56 @@
 {{> nav}}
 <h1> Projects Page </h1>
+
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Project Name</th>
+        <th>Project Description</th>
+        <th>Project Image</th>
+        <th>Likes</th> <!-- New column for like count -->
+        <th>Action</th> <!-- New column for like button -->
+    </tr>
+    {{#each projects}}
+    <tr>
+        <td>{{username}}</td>
+        <td>{{project_name}}</td>
+        <td>{{project_description}}</td>
+        <td>
+            {{#if project_image}}
+            <img src="/uploads/{{project_image}}" alt="Project Image" class="project-image">
+            {{else}}
+            No Image Available
+            {{/if}}
+        </td>
+        <td>{{like_count}}</td> <!-- Display the like count here -->
+        <td>
+            <!-- Like button -->
+            <button class="like-button" data-project-name="{{project_name}}">Like</button>
+        </td>
+    </tr>
+    {{/each}}
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const projectName = event.target.getAttribute('data-project-name');
+                fetch(`/projects/${projectName}/like`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log(data.message);
+                            // Optionally, refresh the page to update the like count
+                        } else {
+                            console.error(data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error liking project:', error));
+            });
+        });
+    });
+</script>
+
+

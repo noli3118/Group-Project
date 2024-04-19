@@ -1,0 +1,69 @@
+{{> nav}}
+<h1>Conversation with {{otherUser}}</h1>
+<div class="messages">
+  {{#each messages}}
+    <div class="message {{#if isSent}}sent{{else}}received{{/if}}">
+      {{!-- Display the username on top of the message --}}
+      <div class="message-header">
+        {{#if isSent}}
+          <strong>You</strong>
+        {{else}}
+          <strong>{{sender_username}}</strong>
+        {{/if}}
+      </div>
+      <p>{{message_text}}</p>
+      <span>{{sent_at}}</span>
+    </div>
+  {{/each}}
+</div>
+<form action="/send_message" method="POST">
+  <textarea name="message_text" required placeholder="Type your message here..."></textarea>
+  <input type="hidden" name="receiver_username" value="{{otherUser}}">
+  <button type="submit">Send</button>
+</form>
+
+<script>
+  const form = document.querySelector('form');
+  const messagesContainer = document.querySelector('.messages');
+  const textarea = document.querySelector('textarea[name="message_text"]');
+  const otherUser = document.querySelector('input[name="receiver_username"]').value;
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const messageText = textarea.value;
+
+    // Send the message with fetch API
+    fetch('/send_message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message_text: messageText, receiver_username: otherUser }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Check if the message was sent successfully
+      if (data.success) {
+        // Create new message element
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', 'sent');
+        messageElement.innerHTML = `
+          <p>${messageText}</p>
+          <span>Just now</span>
+        `;
+        // Append new message to the conversation
+        messagesContainer.appendChild(messageElement);
+        // Scroll to the bottom of the conversation
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } else {
+        // Handle failure - perhaps display a message to the user.
+      }
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+    });
+
+    // Clear the input field
+    textarea.value = '';
+  });
+</script>
