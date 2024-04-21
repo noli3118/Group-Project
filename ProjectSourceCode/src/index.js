@@ -172,7 +172,8 @@ app.get('/logout', async (req, res) => {
 
 app.post('/search', (req, res) => {
     res.render('pages/search', {
-        search: req.body.search
+        search_string: req.body.search_string,
+        search_category: req.body.search_category
     });
 });
 
