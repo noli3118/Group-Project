@@ -57,3 +57,12 @@
   display: table;
   clear: both;
 }
+
+body {
+  background: #fff; /* fallback for old browsers */
+  background: rgb(216, 222, 213);
+  background: linear-gradient(90deg, rgb(214, 217, 212) 0%, rgb(229, 232, 227) 50%);
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;      
+}

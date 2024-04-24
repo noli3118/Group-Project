@@ -1,6 +1,6 @@
 {{> message}}
 
-<main>
+{{!-- <main>
     <div class="container">
         <form method="post" action="/register">
             <h1>Register</h1>
@@ -39,4 +39,66 @@
             </div>
         </form>
     </div>
-</main>
+</main> --}}
+
+{{> message}}
+<form method="post" action="/register">
+    <section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+
+                <div class="mb-md-5 mt-md-4 pb-5">
+
+                <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+                <p class="text-white-50 mb-5">Do not include numbers in username.</p>
+
+                <div class="form-outline form-white mb-4">
+                    <input type="text" id="username" class="form-control form-control-lg" name="username"/>
+                    <label class="form-label" for="username">Username</label>
+                </div>
+
+                <div class="form-outline form-white mb-4">
+                    <input type="password" id="password" class="form-control form-control-lg" name="password"/>
+                    <label class="form-label" for="password">Password</label>
+                </div>
+
+                <div class="mb-4">
+                <label for="major_name">Choose a major:</label>
+                <select name="major_name" id="major_name">
+                    <option value="Aerospace Engineering Sciences">Aerospace Engineering Sciences</option>
+                    <option value="Applied Mathematics">Applied Mathematics</option>
+                    <option value="Architectural Engineering">Architectural Engineering</option>
+                    <option value="Biomedical Engineering">Biomedical Engineering</option>
+                    <option value="Chemical & Biological Engineering">Chemical & Biological Engineering</option>
+                    <option value="Chemical Engineering">Chemical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Creative Technology & Design (ATLAS)">Creative Technology & Design (ATLAS)</option>
+                    <option value="Electrical & Computer Engineering">Electrical & Computer Engineering</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Engineering Physics">Engineering Physics</option>
+                    <option value="Environmental Engineering">Environmental Engineering</option>
+                    <option value="Integrated Design Engineering">Integrated Design Engineering</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                </select>
+            </div>
+
+                <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
+
+                </div>
+
+                <div>
+                <p class="mb-0">Already have an Account? <a href="/login" class="text-white-50 fw-bold">Login</a>
+                </p>
+                </div>
+
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+</form>

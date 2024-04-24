@@ -29,15 +29,15 @@
                 </li>
             </div>
             <div class="search-container">
-                <form method="post" action="/search">
+                <form class="d-flex" method="post" role="search" action="/search">
                     <label for="search_category">Choose a catory:</label>
                     <select name="search_category" id="search_category">
                         <option value="Authors">Authors</option>
                         <option value="Projects">Projects</option>
                         <option value="Groups">Groups</option>
                     </select>
-                    <input type="text" id="seach_string" placeholder="Search.." name="search_string">
-                    <button type="submit">Submit</button>
+                    <input class="form-control me-2" type="text" id="seach_string" placeholder="Search.." name="search_string" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
         </div>
