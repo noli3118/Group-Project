@@ -86,7 +86,7 @@
 </div>
 <div class="container">
     <form method="post" action="/add_project" enctype="multipart/form-data">
-        <h1>Add a Project</h1>
+        <h1>Add/Update a Project</h1>
         <div>
             <label for="project_name">Project Name</label>
         </div>
@@ -97,7 +97,7 @@
             <label for="project_description">Project Description</label>
         </div>
         <div>
-            <textarea id="project_description" name="project_description" rows="10" cols="100"></textarea>
+            <textarea id="project_description" name="project_description" rows="3" cols="100"></textarea>
         </div>
         <div>
             <label for="project_image">Project Image</label>
@@ -105,7 +105,7 @@
         </div>
         <div>
             <input type="hidden" id="username" value={{username}} name="username">
-            <input type="submit" value="Add">
+            <input type="submit" value="Add/Update">
         </div>
     </form>
 </div>

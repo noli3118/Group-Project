@@ -172,7 +172,8 @@ app.get('/logout', async (req, res) => {
 
 app.post('/search', (req, res) => {
     res.render('pages/search', {
-        search: req.body.search
+        search_string: req.body.search_string,
+        search_category: req.body.search_category
     });
 });
 
@@ -896,6 +897,8 @@ app.post('/add_project', upload.single('project_image'), async (req, res) => {
     const query = `INSERT INTO projects (project_name, project_description, project_image) VALUES ($1, $2, $3);
                    INSERT INTO user_projects (username, project_name) VALUES ($4, $1);`;
 
+    const update = 'UPDATE projects SET project_description = $2, project_image = $3 WHERE project_name = $1;';
+
     try {
         // Execute the query with the provided values including the project image filename
         await db.any(query, [project_name, project_description, project_image, username]);
@@ -909,14 +912,28 @@ app.post('/add_project', upload.single('project_image'), async (req, res) => {
         // Log success to the console
         console.log('Project added successfully');
     } catch (err) {
-        // Render the home page with an error message if something goes wrong
-        res.render("pages/home", {
-            username: user.username,
-            message: 'Adding project failed'
-        });
+        try {
+            // Execute the query with the provided values including the project image filename
+            await db.any(update, [project_name, project_description, project_image]);
 
-        // Log the error to the console
-        console.log('Error adding project:', err);
+            // Render the home page with a success message
+            res.render('pages/home', {
+                username: user.username,
+                message: 'Updated project successful'
+            });
+
+            // Log success to the console
+            console.log('Project updated successfully');
+        } catch {
+            // Render the home page with an error message if something goes wrong
+            res.render("pages/home", {
+                username: user.username,
+                message: 'Adding project failed'
+            });
+
+            // Log the error to the console
+            console.log('Error adding project:', err);
+        }
     }
 });
 
