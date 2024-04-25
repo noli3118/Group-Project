@@ -951,7 +951,7 @@ app.post('/send_message', async (req, res) => {
     try {
         await db.none(query, [sender_username, receiver_username, message_text]);
         // Redirect or inform the user that the message was sent successfully
-        res.redirect('/authors'); // or wherever you want to redirect after sending the message
+        res.redirect(`/conversation/${receiver_username}`); // or wherever you want to redirect after sending the message
     } catch (err) {
         console.error('Error sending message:', err);
         res.status(500).render('pages/error', {
