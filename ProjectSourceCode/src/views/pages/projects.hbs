@@ -1,7 +1,7 @@
 {{> nav}}
-<h1> Projects Page </h1>
+<h1> Projects </h1>
 
-<table>
+{{!-- <table>
     <tr>
         <th>Username</th>
         <th>Project Name</th>
@@ -9,27 +9,29 @@
         <th>Project Image</th>
         <th>Likes</th> <!-- New column for like count -->
         <th>Action</th> <!-- New column for like button -->
-    </tr>
+    </tr> --}}
     {{#each projects}}
-    <tr>
-        <td>{{username}}</td>
-        <td>{{project_name}}</td>
-        <td>{{project_description}}</td>
-        <td>
+    
+    <div class="row mb-5" style ="display: flex; flex-direction: row; align-items: center; justify-content: center;" >
+        <div class="card" style="width: 25rem;">
             {{#if project_image}}
-            <img src="/uploads/{{project_image}}" alt="Project Image" class="project-image">
+                <img src="/uploads/{{project_image}}" alt="Project Image" class="card-img-top">
             {{else}}
-            No Image Available
+                No Image Available
             {{/if}}
-        </td>
-        <td>{{like_count}}</td> <!-- Display the like count here -->
-        <td>
-            <!-- Like button -->
-            <button class="like-button" data-project-name="{{project_name}}">Like</button>
-        </td>
-    </tr>
+            <div class="card-body">
+                <h5 class="card-title">{{project_name}}</h5>
+                <p class="card-text">{{project_description}}</p>
+                <button class="like-button" data-project-name="{{project_name}}">Like</button>
+                {{like_count}}
+                {{username}}
+            </div>
+        </div>
+    </div>
+
     {{/each}}
-</table>
+{{!-- </table> --}}
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -53,4 +55,22 @@
     });
 </script>
 
+
+    {{!-- <tr>
+        <td>{{username}}</td>
+        <td>{{project_name}}</td>
+        <td>{{project_description}}</td>
+        <td>
+            {{#if project_image}}
+            <img src="/uploads/{{project_image}}" alt="Project Image" class="project-image">
+            {{else}}
+            No Image Available
+            {{/if}}
+        </td>
+        <td>{{like_count}}</td> <!-- Display the like count here -->
+        <td>
+            <!-- Like button -->
+            <button class="like-button" data-project-name="{{project_name}}">Like</button>
+        </td>
+    </tr> --}}
 
