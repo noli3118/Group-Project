@@ -1,29 +1,28 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=14213400&assignment_repo_type=AssignmentRepo)
-# CSCI 3308 Lab 8: Web Services
+# CSCI 3308 Final Project: CUShares Website
+> Authors and contributors: Cameron Foppe, Connor Smith, Dax Roy, Neena Parikh, Noah Liska, and Patrick Nguyen
 
-|                                                Course Website                                                 |                                                   Canvas                                                    |                                              Piazza                                               |
-| :-----------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------: |
-| [![Course Website](https://img.shields.io/badge/Labs-Lab8-0A4D99)](https://cuboulder-csci3308.pages.dev/docs/labs/lab8) | [![Canvas](https://img.shields.io/badge/Canvas-CSCI3308-CFB87C)](https://canvas.colorado.edu/courses/96969) | [![Piazza](https://img.shields.io/badge/-Piazza-3e7aab)](https://piazza.com/class/lll64nomt766ea) |
+Our website allows students at University of Colorado Boulder to share and view projects of like minded individuals and create connections through these projects. We offer a way to post your projects, message with fellow students, and join groups that interest you!
 
-## Overview
+## Tech Stack
 
-In this lab, you will be working on connecting the NodeJS backend server (provided in the template) to front-end or client-side webpages using Handlebars. To receive credit for this lab, you MUST show your work to the TA during the lab, and push to the github by the deadline. Please note that submissions will be due right before your respective lab sessions in the following week. For Example, If your lab is on this Friday 10 AM, the submission deadline will be next Friday 10 AM. There is a "NO LATE SUBMISSIONS" policy for labs.
+- VCS Repository: GitHub
+- Database: PostgreSQL
+- UI Tools: HTML5, Handlebars
+- Application server, framework, and API service: NodeJS
+- Local deployment environment: Docker
 
-Please follow the instructions on the [course website](https://cuboulder-csci3308.pages.dev/docs/labs/lab8). Note that the above badges serve as quick links to the lab instructions, Course Canvas, and Course Piazza.
+## Software Necessary to Run on Local Server
 
+- Docker 
+- Access to local browser
 
-Please refer to the lab instructions for more details.
-
-## Submission Guidelines
-
-To receive credit for this lab, you MUST check in with your TA during lab and upload your files to this repo by the deadline.
-
-Make sure to add, commit, and push your changes. You should run the following commands inside your local git directory. Make sure to double-check your submission through the browser.
-
-In a terminal opened inside your repo:
-
+## Steps to Access Website
+Open Docker/terminal environment
+In source directory:
 ```bash
-git add .
-git commit -m "Add endpoint routes, handlebars partials, and pages for Lab 8"
-git push
+cd ./ProjectSourceCode
+docker compose up -d #-d flag is optional
 ```
+Verify all tests are passing (All tests will run automatically on container initialization, verify in web-1 container log)
+Access website on [localhost](https://localhost:3000)
+Enjoy!
