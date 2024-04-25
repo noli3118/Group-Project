@@ -23,7 +23,6 @@ In source directory:
 cd ./ProjectSourceCode
 docker compose up -d #-d flag is optional
 ```
-Verify all tests are passing (All tests will run automatically on container initialization, verify in web-1 container log)
-Access website on [localhost](https://localhost:3000)
-
+Verify all tests are passing (All tests will run automatically on container initialization, verify in web-1 container log) \
+Access website on [localhost](https://localhost:3000) \
 Enjoy!
