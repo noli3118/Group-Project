@@ -10,6 +10,8 @@ Our website allows students at University of Colorado Boulder to share and view 
 - UI Tools: HTML5, Handlebars
 - Application server, framework, and API service: NodeJS
 - Local deployment environment: Docker
+- Testing tool: Mocha
+- Cloud deployment environment: Microsoft Azure
 
 ## Software Necessary to Run on Local Server
 
