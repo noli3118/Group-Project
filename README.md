@@ -12,6 +12,7 @@ Our website allows students at University of Colorado Boulder to share and view 
 - Local deployment environment: Docker
 - Testing tool: Mocha
 - Cloud deployment environment: Microsoft Azure
+- Project Tracker: GitHub Projects
 
 ## Software Necessary to Run on Local Server
 
